@@ -18,7 +18,7 @@ function UserDashboard() {
     try {
       const res = await API.get("/users");
       const allUsers = res.data.data || res.data;
-      // Filter out soft-deleted users (deleted: true)
+      // deleted users
       const activeUsers = allUsers.filter(user => !user.deleted);
       setUsers(activeUsers);
     } catch (err) {
@@ -32,7 +32,7 @@ function UserDashboard() {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Apply gender filter to already filtered active users
+  // gender filter
   const filteredUsers = useMemo(() => {
     return filterGender === "All" ? users : users.filter(u => u.gender === filterGender);
   }, [users, filterGender]);
@@ -72,7 +72,6 @@ function UserDashboard() {
   const deleteUser = useCallback(async (id) => {
     try {
       await API.patch(`/users/${id}`, { deleted: true });
-      // Remove from local state immediately for better UX
       setUsers(prevUsers => prevUsers.filter(u => u.id !== id));
       message.success("User deleted");
     } catch (err) {
